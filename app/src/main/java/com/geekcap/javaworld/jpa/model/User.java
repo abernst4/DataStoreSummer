@@ -18,19 +18,21 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-
 import javax.annotation.processing.Generated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+
 import javax.persistence.Table;
 import javax.persistence.JoinTable;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 @Entity
@@ -38,10 +40,8 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 public class User extends PanacheEntity{
     public String name;
     public String email;
-    //private Long id; 
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    //@JoinColumn(name = "group_id")
     public Group group;
 }
