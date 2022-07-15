@@ -1,44 +1,34 @@
-package user_api;
-
-import user_api.entity.User;
-import user_api.database.UserRepository;
-
-import group_api.entity.Group;
-import group_api.database.GroupRepository;
-
+package datastore_api.user_api.route;
+import datastore_api.user_api.entity.User;
+import datastore_api.user_api.database.UserRepository;
+import datastore_api.group_api.entity.Group;
+import datastore_api.group_api.database.GroupRepository;
 import java.util.List;
 import javax.inject.Inject;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.NotFoundException;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-
 import javax.transaction.Transactional;
-
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
 @Path("/userID")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UserResource {
+public class UserRoute {
 
     @Inject UserRepository userRepo;
     @Inject GroupRepository groupRepo;

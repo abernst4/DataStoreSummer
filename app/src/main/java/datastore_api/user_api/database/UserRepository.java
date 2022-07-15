@@ -1,9 +1,6 @@
-package user_api;
-
-import user_api.entity.User;
-
+package datastore_api.user_api.database;
+import datastore_api.user_api.entity.User;
 import java.util.List;
-
 import javax.enterprise.context.ApplicationScoped;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 

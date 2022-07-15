@@ -1,11 +1,10 @@
-package group_api.entity;
-import javax.persistence.CascadeType;
+package datastore_api.group_api.entity;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import java.util.*;
-import user_api.entity.User;
+import datastore_api.user_api.entity.User;
 
 @Entity
 @Table(name = "groups")
