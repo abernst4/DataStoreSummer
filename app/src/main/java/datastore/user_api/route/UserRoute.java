@@ -1,8 +1,8 @@
-package datastore_api.user_api.route;
-import datastore_api.user_api.entity.User;
-import datastore_api.user_api.database.UserRepository;
-import datastore_api.group_api.entity.Group;
-import datastore_api.group_api.database.GroupRepository;
+package datastore.user_api.route;
+import datastore.user_api.entity.User;
+import datastore.user_api.database.UserRepository;
+import datastore.group_api.entity.Group;
+import datastore.group_api.database.GroupRepository;
 import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;

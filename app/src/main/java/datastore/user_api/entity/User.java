@@ -1,10 +1,10 @@
-package datastore_api.user_api.entity;
+package datastore.user_api.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import datastore_api.group_api.entity.Group;
+import datastore.group_api.entity.Group;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 

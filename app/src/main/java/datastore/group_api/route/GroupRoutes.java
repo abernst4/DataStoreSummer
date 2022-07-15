@@ -1,4 +1,4 @@
-package datastore_api.group_api.route;
+package datastore.group_api.route;
 import java.util.List;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -19,8 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-import datastore_api.group_api.database.GroupRepository;
-import datastore_api.group_api.entity.Group;
+import datastore.group_api.database.GroupRepository;
+import datastore.group_api.entity.Group;
 
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
