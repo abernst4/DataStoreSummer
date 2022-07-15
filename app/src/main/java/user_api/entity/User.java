@@ -7,9 +7,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.geekcap.javaworld.jpa.model.Group;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 @Entity

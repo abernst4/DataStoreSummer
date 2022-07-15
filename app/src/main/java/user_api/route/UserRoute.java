@@ -9,18 +9,12 @@ import group_api.database.GroupRepository;
 import java.util.List;
 import javax.inject.Inject;
 
-import javax.ws.rs.Consumes;
-import javax.transaction.Transactional;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,11 +23,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-
 import javax.ws.rs.NotFoundException;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
+import javax.transaction.Transactional;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
