@@ -19,8 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-import  com.geekcap.javaworld.jpa.repository.GroupRepository;
-import  com.geekcap.javaworld.jpa.model.Group;
+import group_api.database.GroupRepository;
+import group_api.entity.Group;
 
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)

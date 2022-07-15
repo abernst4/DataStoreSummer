@@ -1,6 +1,6 @@
 package group_api.database;
-import  com.geekcap.javaworld.jpa.model.Group;
-import com.geekcap.javaworld.jpa.model.User;
+import  group_api.entity.Group;
+import user_api.entity.User;
 import javax.enterprise.context.ApplicationScoped;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
