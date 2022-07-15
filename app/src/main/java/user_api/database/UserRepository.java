@@ -1,11 +1,7 @@
-package com.geekcap.javaworld.jpa.repository;
+package user_api;
 
-import com.geekcap.javaworld.jpa.resource.UserResource;
-import com.geekcap.javaworld.jpa.model.User;
-import javax.persistence.EntityManager;
+import user_api.entity.User;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
