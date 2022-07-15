@@ -1,7 +1,7 @@
 package com.geekcap.javaworld.jpa.model;
 
 import com.geekcap.javaworld.jpa.resource.UserResource;
-import com.geekcap.javaworld.jpa.repository.UserRepository;
+import user_api.database.UserRepository;
 
 import com.geekcap.javaworld.jpa.model.Group;
 import com.geekcap.javaworld.jpa.resource.GroupResource;
@@ -11,11 +11,10 @@ import java.util.Set;
 import java.lang.annotation.Inherited;
 import java.util.HashSet;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.CascadeType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
