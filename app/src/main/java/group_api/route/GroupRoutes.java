@@ -1,7 +1,5 @@
-package com.geekcap.javaworld.jpa.resource;
-
+package group_api.route;
 import java.util.List;
-import java.net.URI;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -18,24 +16,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-
 import  com.geekcap.javaworld.jpa.repository.GroupRepository;
 import  com.geekcap.javaworld.jpa.model.Group;
-import  com.geekcap.javaworld.jpa.resource.*;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class GroupResource {
-
+public class GroupRoutes {
     @Inject GroupRepository groupRepo;
-    
     @GET
     public List<Group> getAll() {
         return groupRepo.listAll();
@@ -74,21 +65,19 @@ public class GroupResource {
             return Response.status(Status.CREATED).entity(group).build();
         }
         return Response.status(NOT_FOUND).build();
-  } 
+    } 
   
-  @POST
+    @POST
     @Transactional
     public Response create(Group group, @Context UriInfo uriInfo) {
         groupRepo.persist(group);
         if (!groupRepo.isPersistent(group)) {
             throw new NotFoundException();
         }
-        // return Response.status(Status.CREATED).entity(gallery).build();
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         uriBuilder.path(Long.toString(group.id));
         return Response.created(uriBuilder.build()).entity(group).status(Status.CREATED).build();
     }
-
 
     @DELETE
     @Path("{id}")
@@ -96,7 +85,5 @@ public class GroupResource {
     public Response deleteById(@PathParam("id") Long id) {
         boolean deleted = groupRepo.deleteById(id);
         return deleted ? Response.noContent().build() : Response.status(BAD_REQUEST).build();
-    }
-
-    
+    }  
 }

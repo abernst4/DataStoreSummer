@@ -1,19 +1,17 @@
-package com.geekcap.javaworld.jpa.model;
+package group_api.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-//import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import java.util.*;
-
+import user_api.entity.User;
 
 @Entity
 @Table(name = "groups")
 public class Group extends PanacheEntity{
     public String name;
-    @OneToMany(mappedBy = "group")//, cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "group")
     public List<User> users;
 }
 
