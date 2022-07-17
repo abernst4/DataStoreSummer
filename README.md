@@ -1,11 +1,7 @@
 # DataStore Project
-
-## General
-The data store comprises a users and groups relationship.
-
-The goal of the program is to convert Java object into database tables. 
-An instance of a Java class is the same thing as an item in a databsase table.
-A field of a Java class is an abtribute of an item.
+## The Goal on Phase #1
+The goal of the program is to convert Java objects into database tables. 
+* An instance of a Java class is analogous to an item in a databsase table; a field of a Java class is an abtribute of an item.
 Our goal was to persistce user and group Java objects into user and group tables. 
 
 There are 3 components to persistce the objects
