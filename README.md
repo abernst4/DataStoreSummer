@@ -47,8 +47,5 @@ The goal of the program is to convert Java objects into database tables.
 * There is two primary sections to our file structure within src/main/java/datastore - group_api and user_api. 
 * Each section has its own database, entity, and route folders and files. 
 
-### What is the difference between the convetional Flask and Quarkus? 
-* 
-
 ### Our Paradigm
 Our goal was to persistce user and group Java objects into user and group tables. 
