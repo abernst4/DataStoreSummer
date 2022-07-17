@@ -1,5 +1,5 @@
 # Our DataStore
-## How to use the application
+## How to use the application?
 First things first, make sure you have a few softwares downloaded and if not, download them before properly using our program.
 ### Java
 * Because our program primarily runs on Java, you will need to have JDK 11 installed on your computer - newer verion should also be fine, but JDK 11 is prefered.
