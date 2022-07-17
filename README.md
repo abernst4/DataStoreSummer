@@ -10,7 +10,7 @@ First things first, make sure you have a few softwares downloaded and if not, do
 * To learn more about Maven, see - https://www.simplilearn.com/tutorials/maven-tutorial/what-is-maven#:~:text=Maven%20is%20written%20in%20Java,build%20and%20testing%20automation%20setups.
 ### Getting started with Quarkus
 * After cloning our GitHub repo, cd into the 'app' folder
-* You can run the program simply with the following command in your terminal - 'mvn quarkus:dev'
+* You can run the program simply with the following command in your terminal - __mvn quarkus:dev__.
 * Now let's learn a bit more about the magic that goes on behind the scenes in our program and with Quarkus. 
 
 ## The Goal of our DataStore
