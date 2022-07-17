@@ -41,7 +41,7 @@ The goal of the program is to convert Java objects into database tables.
 * Quarkus provides more than an application framework - It provides some niceities around docker and kubernetes. However, we will not be applying those until the next phase.
 
 ## File Structure
-* 
+* We decided to divide our file strucuture in accordance with our two classes because we divided our work load based on class (groups vs. users) and not by routes, methods, and d
 
 ### What is the difference between the convetional Flask and Quarkus? 
 * 
