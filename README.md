@@ -1,6 +1,10 @@
 # DataStore Project
-## The Goal of Phase One
-The goal of the Phase One is to convert Java objects into database tables. 
+
+## Consumers
+
+
+## Developers
+The goal of the program is to convert Java objects into database tables. 
 * An instance of a Java class is analogous to an item in a databsase table.
 * A field of a Java class is an abtribute of an item.
 
@@ -16,17 +20,25 @@ The goal of the Phase One is to convert Java objects into database tables.
 #### Create Read Update Delete (CRUD) Opperations
 * Generally speaking, in HTTP, CRUD opperations are storage semantics that let users create and manipulate data. 
 * However, there are two primary reasons why CRUD opperations are actually necessary:
-  * 1) Speed - The execution plan for a stored procedure is saved in SQL Server's procedure cache and reused for all subsequent calls to the procedure.  
-  * 2) Protects against SQL injection attacks - Since all SQL Statements employ stored procedures instead of string concatenation to generate dynamic queries from user input data, everything entered into a parameter is quoted.
-For more, see https://www.atatus.com/glossary/crud/.
+  * Speed - The execution plan for a stored procedure is saved in SQL Server's procedure cache and reused for all subsequent calls to the procedure.  
+  * Protects against SQL injection attacks - Since all SQL Statements employ stored procedures instead of string concatenation to generate dynamic queries from user input data, everything entered into a parameter is quoted.
+* To learn more about CRUD opperations see https://www.atatus.com/glossary/crud/.
 
-### Hibernate 
-* Hibernate is one of the most mature JPA applications - it is a form the JPA. 
+## H2 Database
+* It is an in-memory database, which means that data will not persist on the disk. Accordingly, it is ideal for testing because it avoids storing test data on the disk.
+* An open-source lightweight Java databse.
+* It supports standard SQL and JDBC API. It can use PostgreSQL ODBC driver too.
+* To learn more about H2, see https://www.tutorialspoint.com/h2_database/h2_database_introduction.htm.
 
-There are three parts to file structure and api
+## Operates using Quarkus.
+* In practice, Quarkus allows a programer to host their Java program on their local machine (similar to hosting a Python program with Flask).
+* Quarkus allows developers to make modifications to the code while the application is running. Accoridingly, they bypass the time consuming need to restart the application each time they wish to make some modification.
+* To learn more about quarkus, see https://quarkus.io/.
+
+### File
+
+### What is the difference between the convetional Flask and Quarkus? 
+* 
 
 ### Our Paradigm
 Our goal was to persistce user and group Java objects into user and group tables. 
-
-Operates using Quarkus. To learn more about quarkus https://quarkus.io/.
-
