@@ -1,10 +1,20 @@
-# DataStore Project
+# Our DataStore
+## How to use the application
+First things first, make sure you have a few softwares downloaded and if not, download them before properly using our program.
+### Java
+* Because our program primarily runs on Java, you will need to have JDK 11 installed on your computer - newer verion should also be fine, but JDK 11 is prefered.
+* To learn more about downloading Java, see https://docs.oracle.com/en/java/javase/11/install/overview-jdk-installation.html#GUID-8677A77F-231A-40F7-98B9-1FD0B48C346A.
+### Maven
+* Maven is a software that faciliates building other software: it organizes the file structure of the project and facilitates the building of the program.
+* To download maven, see - https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html.
+* To learn more about Maven, see - https://www.simplilearn.com/tutorials/maven-tutorial/what-is-maven#:~:text=Maven%20is%20written%20in%20Java,build%20and%20testing%20automation%20setups.
+### Getting started with Quarkus
+* After cloning our GitHub repo, cd into the 'app' folder
+* You can run the program simply with the following command in your terminal - 'mvn quarkus:dev'
+* Now let's learn a bit more about the magic that goes on behind the scenes in our program and with Quarkus. 
 
-## Consumers
-
-
-## Developers
-The goal of the program is to convert Java objects into database tables. 
+## The Goal of our DataStore
+The goal of our DataStore is to convert Java objects into database tables. 
 * An instance of a Java class is analogous to an item in a databsase table.
 * A field of a Java class is an abtribute of an item.
 
@@ -48,16 +58,4 @@ The goal of the program is to convert Java objects into database tables.
 * Each section has its own database, entity, and route folders and files. 
 
 ### Our Paradigm
-Our goal was to persistce user and group Java objects into user and group tables. 
-
-## Consumers
-How can people use this application? 
-Consumers will need to have a few software downloaded before properly using our program. 
-### Java
-* Because our program primarily runs on Java, you will need to have JDK 11 installed on your computer - newer verion should also be fine, but JDK 11 is prefered. 
-* To learn more about downloading Java, see https://docs.oracle.com/en/java/javase/11/install/overview-jdk-installation.html#GUID-8677A77F-231A-40F7-98B9-1FD0B48C346A.
-### Maven
-* Maven is a software that faciliates building other software: it organizes the file structure of the project and facilitates 
-### Getting started with Quarkus
-* After cloning our GitHub repo, cd into the 'app' folder 
-* By running the command 
+Our goal was to persistce user and group Java objects into user and group tables.
