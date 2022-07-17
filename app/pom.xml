@@ -76,6 +76,46 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-agroal</artifactId>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-test-common -->
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-test-common</artifactId>
+    <version>2.11.0.CR1</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-test-common -->
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-test-common</artifactId>
+    <version>0.26.1</version>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-resteasy-jackson</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-hibernate-orm-panache</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-jdbc-h2</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-junit5-mockito</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-test-h2</artifactId>
+</dependency>
+<!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+<dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>rest-assured</artifactId>
+    <version>5.1.0</version>
+    <scope>test</scope>
+</dependency>
+
   </dependencies>
   <build>
     <plugins>
