@@ -18,7 +18,7 @@ The goal of the program is to convert Java objects into database tables.
 * It helps separate the logic from the database operations and improves the reusability of our code.
 #### 3) Routes
 * An API route gets the specific and necessary information to accomplish a webpage.
-##### Create Read Update Delete (CRUD) Opperations
+##### **C**reate, **R**ead, **U**pdate, **D**elete (CRUD) Opperations
 * Generally speaking, in HTTP, CRUD opperations are storage semantics that let users create and manipulate data. 
 * However, there are two primary reasons why CRUD opperations are actually necessary:
   * Speed - The execution plan for a stored procedure is saved in SQL Server's procedure cache and reused for all subsequent calls to the procedure.  
