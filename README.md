@@ -36,13 +36,12 @@ The goal of the program is to convert Java objects into database tables.
 * Quarkus allows developers to make modifications to the code while the application is running. Accoridingly, they bypass the time consuming need to restart the application each time they wish to make some modification.
 * To learn more about quarkus, see https://quarkus.io/.
 
-### Why we used Quarkus
-* Our goal in general was to be able to load our changes quickly while developing our platform - Quarkus is most suited for quick load times. 
-#### Why we used Quarkus over Spring Boot and Helidon
+### Why we used Quarkus over Spring Boot and Helidon
 * Quarkus provides faster hot reloads since it can automatically detect changes made to Java and other resource/configuration files, and transparently re-compile and deploy the changes.
+* Quarkus provides more than an application framework - It provides some niceities around docker and kubernetes. However, we will not be applying those until the next phase.
 
 ## File Structure
-*
+* 
 
 ### What is the difference between the convetional Flask and Quarkus? 
 * 
