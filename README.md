@@ -1,6 +1,6 @@
-#DataStore Project
+# DataStore Project
 
-##General
+## General
 The data store comprises a users and groups relationship.
 
 The goal of the program is to convert Java object into database tables. 
@@ -10,10 +10,10 @@ Our goal was to persistce user and group Java objects into user and group tables
 
 There are 3 components to persistce the objects
 
-##Java Persistence API - JPA - allows us to convert Java Objects into tables. 
-###PenachieEntity
+## Java Persistence API - JPA - allows us to convert Java Objects into tables. 
+### PenachieEntity
 PenachieEntity simplies the process - it simplifies boiler plate code.
-###Hibernate 
+### Hibernate 
 Hibernate is one of the most mature JPA applications - it is a form the JPA. 
 
 There are three parts to file structure and api
