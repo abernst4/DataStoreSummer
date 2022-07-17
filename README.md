@@ -41,7 +41,7 @@ The goal of the program is to convert Java objects into database tables.
 * Quarkus provides more than an application framework - It provides some niceities around docker and kubernetes. However, we will not be applying those until the next phase.
 
 ## File Structure
-* We structured our files in accordance with our two classes because __we divided our work load based on class (groups vs. users) and not by routes, methods, and database commands__. 
+* We structured our files in accordance with our two classes because __we divided our work load based on classes (groups vs. users) and not by routes, methods, and database commands__. 
 * There is two primary sections to our file structure within src/main/java/datastore - group_api and user_api. 
 * Each section has its own database, entity, and route folders and files. 
 
