@@ -11,7 +11,8 @@ First things first, make sure you have a few softwares downloaded and if not, do
 ### Getting started with Quarkus
 * After cloning our GitHub repo, cd into the 'app' folder
 * You can run the program simply with the following command in your terminal - __mvn quarkus:dev__.
-* Now let's learn a bit more about the magic that goes on behind the scenes in our program and with Quarkus. 
+
+Now let's learn a bit more about the magic that goes on behind the scenes in our program and some of the technologies we chose to use. 
 
 ## The Goal of our DataStore
 The goal of our DataStore is to convert Java objects into database tables. 
