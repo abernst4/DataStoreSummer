@@ -49,3 +49,15 @@ The goal of the program is to convert Java objects into database tables.
 
 ### Our Paradigm
 Our goal was to persistce user and group Java objects into user and group tables. 
+
+## Consumers
+How can people use this application? 
+Consumers will need to have a few software downloaded before properly using our program. 
+### Java
+* Because our program primarily runs on Java, you will need to have JDK 11 installed on your computer - newer verion should also be fine, but JDK 11 is prefered. 
+* To learn more about downloading Java, see https://docs.oracle.com/en/java/javase/11/install/overview-jdk-installation.html#GUID-8677A77F-231A-40F7-98B9-1FD0B48C346A.
+### Maven
+* Maven is a software that faciliates building other software: it organizes the file structure of the project and facilitates 
+### Getting started with Quarkus
+* After cloning our GitHub repo, cd into the 'app' folder 
+* By running the command 
