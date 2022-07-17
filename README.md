@@ -18,7 +18,7 @@ The goal of the program is to convert Java objects into database tables.
 * It helps separate the logic from the database operations and improves the reusability of our code.
 #### 3) Routes
 * An API route gets the specific and necessary information to accomplish a webpage.
-##### Create Read Update Delete (CRUD) Opperations
+##### Create, Read, Update, Delete (CRUD) Opperations
 * Generally speaking, in HTTP, CRUD opperations are storage semantics that let users create and manipulate data. 
 * However, there are two primary reasons why CRUD opperations are actually necessary:
   * Speed - The execution plan for a stored procedure is saved in SQL Server's procedure cache and reused for all subsequent calls to the procedure.  
@@ -31,12 +31,21 @@ The goal of the program is to convert Java objects into database tables.
 * It supports standard SQL and JDBC API. It can use PostgreSQL ODBC driver too.
 * To learn more about H2, see https://www.tutorialspoint.com/h2_database/h2_database_introduction.htm.
 
-## Operates using Quarkus.
-* In practice, Quarkus allows a programer to host their Java program on their local machine (similar to hosting a Python program with Flask).
-* Quarkus allows developers to make modifications to the code while the application is running. Accoridingly, they bypass the time consuming need to restart the application each time they wish to make some modification.
+## Operates using Quarkus
+### In practice
+* Quarkus allows a programer to host their Java program on their local machine (similar to hosting a Python program with Flask).
+* Quarkus allows developers to make modifications to their code while the application is running. Accoridingly, they bypass the time-consuming need to restart the application each time they wish to make some modification.
 * To learn more about quarkus, see https://quarkus.io/.
 
-### File
+### Why we used Quarkus over Spring Boot and Helidon
+* Quarkus provides faster hot reloads since it can automatically detect changes made to Java and other resource/configuration files, and transparently re-compile and deploy the changes.
+* Quarkus provides more than an application framework - It provides some necessities around docker and kubernetes. However, we will not be applying those until the next phase.
+* To learn more about the differences between the different services, see https://rollbar.com/blog/quarkus-vs-spring-boot/#:~:text=Quarkus%20provides%20faster%20hot%20reloads,running%20in%20a%20remote%20environment.
+
+## File Structure
+* We structured our files in accordance with our two classes because __we divided our work load based on classes (groups vs. users) and not by routes, methods, and database commands__. 
+* There is two primary sections to our file structure within src/main/java/datastore - group_api and user_api. 
+* Each section has its own database, entity, and route folders and files. 
 
 ### What is the difference between the convetional Flask and Quarkus? 
 * 
