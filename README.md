@@ -60,5 +60,3 @@ The goal of our DataStore is to convert Java objects into database tables.
 
 ### Our Paradigm
 Our goal was to persistce user and group Java objects into user and group tables.
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/pOGE0i578c0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
