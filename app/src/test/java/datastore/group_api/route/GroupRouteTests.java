@@ -1,4 +1,4 @@
-package datastore.group_tests.route_tests;
+package datastore.group_api.route;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -8,16 +8,18 @@ import java.util.UUID;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
+import java.util.*;
+
 @QuarkusTest
 public class GroupRouteTests {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testGroupGetAllEndpoint() {
         given()
-                .when().get("/groups")
-                .then()
-                .statusCode(200)
-                .body(is("{[]}"));
+            .when().get("/groups")
+            .then()
+            .statusCode(200);
+            //.body(is(new ArrayList<>()));
     }
 
     /*
