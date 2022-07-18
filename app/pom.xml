@@ -60,6 +60,7 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-h2</artifactId>
     </dependency>
+
     <!--
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -90,10 +91,12 @@
     <artifactId>quarkus-test-common</artifactId>
     <version>0.26.1</version>
 </dependency>
+
 <dependency>
     <groupId>io.quarkus</groupId>
     <artifactId>quarkus-resteasy-jackson</artifactId>
 </dependency>
+
 <dependency>
     <groupId>io.quarkus</groupId>
     <artifactId>quarkus-hibernate-orm-panache</artifactId>
