@@ -38,13 +38,7 @@ public class GroupRoutes {
     public Group getById(@PathParam("id") Long id) {
         return groupRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
-    /*
-    @GET
-    @Path("/{name}")
-    public Group getByName(@PathParam("name") String name) {
-        return groupRepo.findByName(name);
-    }
-    */
+
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)

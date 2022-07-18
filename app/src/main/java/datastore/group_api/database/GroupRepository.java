@@ -10,8 +10,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 @ApplicationScoped
 public class GroupRepository implements PanacheRepository<Group> {
     public List<Group> findByName(String name) {
-        //return find("name", name).firstResult();
-        return list("groups = ?1", name);
+        return list("name = ?1", name);
     }
 
     public Group findByUser(User user){
