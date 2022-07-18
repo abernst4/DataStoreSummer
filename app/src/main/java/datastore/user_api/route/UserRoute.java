@@ -35,10 +35,8 @@ public class UserRoute {
     @Inject GroupRepository groupRepo;
 
     @GET
-    //@Path("/{group-id}/users")
     @Path("/users")
     public List<User> getAll(
-                            //@PathParam("group-id") Long groupId,
                             @QueryParam("group-id") Long groupId,
                             @QueryParam("name") String name,
                             @QueryParam("email") String email
@@ -79,14 +77,14 @@ public class UserRoute {
     }
     
     @PUT
-    //@Path("/{group-id}/users/{id}")
-    @Path("/update/user")
+    @Path("/{group-id}/users/{id}")
+    //@Path("/update/user")
     @Transactional
     public Response update(
-                                //@PathParam("group-id") Long groupId,
-                                //@PathParam("id") Long id,
-                                @QueryParam("group-id") Long groupId,
-                                @QueryParam("id") Long id,
+                                @PathParam("group-id") Long groupId,
+                                @PathParam("id") Long id,
+                                //@QueryParam("group-id") Long groupId,
+                                //@QueryParam("id") Long id,
                                 User user,
                                 @Context UriInfo uriInfo
                             )
