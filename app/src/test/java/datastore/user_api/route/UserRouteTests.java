@@ -1,4 +1,4 @@
-package datastore.group_api.route;
+package datastore.user_api.route;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
