@@ -58,6 +58,7 @@ public class GroupRoutes {
     }
     
     @POST
+    @Path("/create")
     @Transactional
      public Response create(Group group) {
         groupRepo.persist(group);

@@ -56,7 +56,8 @@ public class UserRoute {
     public User getById(@PathParam("id") Long id) {
         return userRepo.findById(id);
     }
-    
+
+
     @POST
     @Transactional
     @Path("/{group-id}/users")
