@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -25,8 +26,11 @@ import datastore.group_api.entity.Group;
 public class GroupRoutes {
     @Inject GroupRepository groupRepo;
     @GET
-    public List<Group> getAll(@PathParam("name") String name) {
-        return groupRepo.listAll();
+    public List<Group> getAll(@QueryParam("name") String name) {
+        if(name == null){
+            return groupRepo.listAll();
+        }
+        return groupRepo.findByName(name);
     }
 
     @GET
@@ -34,13 +38,13 @@ public class GroupRoutes {
     public Group getById(@PathParam("id") Long id) {
         return groupRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
-    
+    /*
     @GET
     @Path("/{name}")
     public Group getByName(@PathParam("name") String name) {
         return groupRepo.findByName(name);
     }
-    
+    */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -56,7 +60,6 @@ public class GroupRoutes {
     }
     
     @POST
-    //@Path("/create")
     @Transactional
      public Response create(Group group) {
         groupRepo.persist(group);
