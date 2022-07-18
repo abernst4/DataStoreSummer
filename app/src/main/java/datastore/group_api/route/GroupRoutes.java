@@ -9,12 +9,9 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -28,24 +25,24 @@ import datastore.group_api.entity.Group;
 public class GroupRoutes {
     @Inject GroupRepository groupRepo;
     @GET
-    public List<Group> getAll() {
+    public List<Group> getAll(@PathParam("name") String name) {
         return groupRepo.listAll();
     }
 
     @GET
-    @Path("{id}")
+    @Path("/{id}")
     public Group getById(@PathParam("id") Long id) {
         return groupRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
     
     @GET
-    @Path("name/{name}")
+    @Path("/{name}")
     public Group getByName(@PathParam("name") String name) {
         return groupRepo.findByName(name);
     }
-
+    
     @PUT
-    @Path("{id}")
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Long id, Group gr) {
@@ -54,6 +51,7 @@ public class GroupRoutes {
             throw new NotFoundException();
         }
         group.name = gr.name;
+        groupRepo.persist(group);
         return Response.status(Status.OK).entity(group).build();
     }
     
@@ -66,21 +64,9 @@ public class GroupRoutes {
         }
         return Response.status(NOT_FOUND).build();
     } 
-  
-    @POST
-    @Transactional
-    public Response create(Group group, @Context UriInfo uriInfo) {
-        groupRepo.persist(group);
-        if (!groupRepo.isPersistent(group)) {
-            throw new NotFoundException();
-        }
-        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-        uriBuilder.path(Long.toString(group.id));
-        return Response.created(uriBuilder.build()).entity(group).status(Status.CREATED).build();
-    }
 
     @DELETE
-    @Path("{id}")
+    @Path("/{id}")
     @Transactional
     public Response deleteById(@PathParam("id") Long id) {
         boolean deleted = groupRepo.deleteById(id);

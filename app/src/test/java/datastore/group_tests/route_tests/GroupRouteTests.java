@@ -17,7 +17,7 @@ public class GroupRouteTests {
                 .when().get("/groups")
                 .then()
                 .statusCode(200)
-                .body(is(""));
+                .body(is("{[]}"));
     }
 
     /*
