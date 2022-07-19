@@ -1,6 +1,5 @@
 package datastore.hub_api.route;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -10,41 +9,35 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.inject.Inject;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 import javax.transaction.Transactional;
 
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import java.util.*;
 
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.net.URI;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
+import reactor.core.publisher.Mono;
 
 @Path("/hub")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class HubRoutes {
 
+    /**
+     * Holds group ids and urls
+     */
     @Entity
     public class GroupURL extends PanacheEntity{
         public URL url; 
@@ -53,12 +46,19 @@ public class HubRoutes {
     private HubRepository hubRepo = new HubRepository();
 
 
+    /**
+     * 
+     * @param group_url
+     * @param uriInfo
+     * @return group_url.id 
+     * @throws JsonProcessingException
+     */
     @POST
     @Transactional
     public long create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
         //Recording the groups id and url in db
         this.hubRepo.persist(group_url);
-        this.recordURL();
+        this.serveURLs();
 
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         uriBuilder.path(Long.toString(group_url.id));
@@ -66,25 +66,39 @@ public class HubRoutes {
         return group_url.id;
     }
 
-    private void recordURL() {
+    /**
+     * WebClient is an interface representing the main entry point for performing web requests.
+     * is a non-blocking, reactive client for performing HTTP requests with Reactive Streams back pressure.
+     * create - Create a new WebClient with Reactor Netty by default.
+     * post - Start building an HTTP POST request
+     * uri - Specify the URI starting with a URI template and finishing off with a UriBuilder created from the template.
+     * body - We can call .body() with a Flux (including a Mono), which can stream content asynchronously to build the request body.
+     * bodyHoldMono - The WebClient class uses reactive features, in the form of a Mono to hold the content of the message
+     */
+    private void serveURLs() {
         Map<Long, URL> groupURLs = this.hubRepo.getGroupUrls();
         for (long id : groupURLs.keySet()) {
             //Post 
-            (this.hubRepo.toMap().get(id));
-        }
+            URL url = this.hubRepo.getGroupUrls().get(id);
+            WebClient client = WebClient.create(url.toString());
+            client
+                .post()
+                .uri("/servers")
+                .header("Authorization", "Bearer MY_SECRET_TOKEN")
+                .body(Mono.just(groupURLs), Map.class)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+                //.accept(MediaType.APPLICATION_JSON)                
+                //.contentType(MediaType.APPLICATION_FORM_URLENCODED)                
+                //.get().accept(MediaType.APPLICATION_JSON)
+            }
+            //change
     }
-    
 
-    //This method enables the URL map to be sent to URLs beyond those in the current URL map. 
-    //Current use-case is a DELETE, where the URL is deleted from the map, but the gallery located at that URL should still receive that updated map so that it can properly redirect requests. So, this method is called with otherURLs containing the URL of the deleted gallery.
-    //Future use-cases for this method might include exporting the URL map to backup servers, or doing a mass delete where more than one URL is deleted from the map and the map needs to be sent to many URLs which are now not present in the map.
-    private void recordURL(List<URL> otherURLs) {
-        this.recordURL();
-        for (URL url : otherURLs) {
-            post(url);
-        }
-    }
-
+    /**
+     * Converts Java group objects, whihc contian ids and urls, and converts them into a database table
+     */
     @ApplicationScoped
     public class HubRepository implements PanacheRepository<GroupURL> {
         public Map<Long, URL> getGroupUrls() {
@@ -96,6 +110,30 @@ public class HubRoutes {
             return IdMap;
         }
     }
+
+    /**
+     * What is this method doing?
+     * @param otherURLs
+     */
+    /*
+    private void recordOtherURLs(List<URL> otherURLs) {
+        this.recordURL();
+        for (URL url : otherURLs) {
+            WebClient client = WebClient.create(url.toString());
+            client
+                .post()
+                .uri("")
+                .body(
+                    Mono.just(hubRepo.getGroupUrls()), 
+                    Map.class
+                )
+                .retrieve()
+                .bodyToMono(String.class).block();
+        }
+        return;
+    }
+     */
+
 
 }
 
