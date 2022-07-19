@@ -72,7 +72,11 @@ public class UserRoute {
         }
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         uriBuilder.path(Long.toString(user.id));
-        return Response.created(uriBuilder.build()).entity(user).status(Status.CREATED).build();
+        return Response
+                        .created(uriBuilder.build())
+                        .entity(user)
+                        .status(Status.CREATED)
+                        .build();
     }
     
     @PUT
@@ -93,7 +97,10 @@ public class UserRoute {
         user_entity.name = user.name;
         user_entity.email = user.email;
         userRepo.persist(user_entity);
-        return Response.status(Status.OK).entity(user_entity).build();
+        return Response
+                        .status(Status.OK)
+                        .entity(user_entity)
+                        .build();
     }
 
     @DELETE
@@ -103,7 +110,9 @@ public class UserRoute {
         groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new);
         User entity = userRepo.findById(id);
         if (entity == null) {
-            return Response.status(NOT_FOUND).build();
+            return Response
+                            .status(NOT_FOUND)
+                            .build();
         }
         boolean deleted = userRepo.deleteById(id);
         return deleted ? Response.noContent().build() : Response.status(INTERNAL_SERVER_ERROR).build();
