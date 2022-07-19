@@ -49,11 +49,8 @@ public class Hub {
     }
 
 
-    //Gallery talking to hub (during user POST to create a gallery)
-    //Hub talks back to gallery and returns the updated list of the IPs
     @POST
     @Transactional
-    // , @Context UriInfo uriInfo
     public Response create(GroupStuff group, @Context UriInfo uriInfo) {
         group.persist();
 
