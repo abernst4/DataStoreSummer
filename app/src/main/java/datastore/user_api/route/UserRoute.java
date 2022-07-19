@@ -21,11 +21,11 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import javax.transaction.Transactional;
 
-@Path("/userID")
+@Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserRoute {
@@ -34,11 +34,13 @@ public class UserRoute {
     @Inject GroupRepository groupRepo;
 
     @GET
-    @Path("/{group-id}/users")
+    @Path("/users")
     public List<User> getAll(
-                            @PathParam("group-id") long groupId,
+                            @QueryParam("group-id") Long groupId,
                             @QueryParam("name") String name,
-                            @QueryParam("email") String email) {
+                            @QueryParam("email") String email
+                            )
+    {
         if (name == null & email == null) {
             return groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new).users;
         } else if (email == null) {
@@ -56,7 +58,8 @@ public class UserRoute {
     public User getById(@PathParam("id") Long id) {
         return userRepo.findById(id);
     }
-    
+
+
     @POST
     @Transactional
     @Path("/{group-id}/users")
@@ -75,15 +78,22 @@ public class UserRoute {
     @PUT
     @Path("/{group-id}/users/{id}")
     @Transactional
-    public Response update(@PathParam("group-id") Long groupId, @PathParam("id") Long id, User user) {
+    public Response update(
+                                @PathParam("group-id") Long groupId,
+                                @PathParam("id") Long id,
+                                User user,
+                                @Context UriInfo uriInfo
+                            )
+    {
         groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new);
-        User entity = userRepo.findById(id);
-        if (entity == null) {
+        User user_entity = userRepo.findById(id);
+        if (user_entity == null) {
             return Response.status(NOT_FOUND).build();
         }
-        entity.name = user.name;
-        entity.email = user.email;
-        return Response.status(Status.OK).entity(entity).build();
+        user_entity.name = user.name;
+        user_entity.email = user.email;
+        userRepo.persist(user_entity);
+        return Response.status(Status.OK).entity(user_entity).build();
     }
 
     @DELETE
@@ -91,7 +101,11 @@ public class UserRoute {
     @Transactional
     public Response deleteById(@PathParam("group-id") Long groupId, @PathParam("id") Long id) {
         groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new);
+        User entity = userRepo.findById(id);
+        if (entity == null) {
+            return Response.status(NOT_FOUND).build();
+        }
         boolean deleted = userRepo.deleteById(id);
-        return deleted ? Response.noContent().build() : Response.status(BAD_REQUEST).build();
+        return deleted ? Response.noContent().build() : Response.status(INTERNAL_SERVER_ERROR).build();
     }
 }
