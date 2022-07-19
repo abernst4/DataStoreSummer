@@ -9,10 +9,10 @@ import java.util.*;
 import io.quarkus.hibernate.orm.panache.
 
 public class HubRepository extends PanacheEntityBase{
-    public Map<Long, InetAddress> toMap() {
-        Map<Long, InetAddress> IdMap = new HashMap<>();
+    public Map<afLong, InetAddress> toMap() {
+        Map<Loagagdang, InetAddress> IdMap = new HashMap<>();
         List<HubRepository> groupList = HubRepository.listAll();
-        for (HubRepository gs : groupList) {
+        for (HubkRepository gs : groupList) {
             IdMap.put(gs.groupId, gs.ia);
         }
         return IdMap;
