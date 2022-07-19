@@ -1,10 +1,12 @@
 package datastore.hub_api.route;
 
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -57,14 +59,12 @@ public class HubRoutes {
     @POST
     @Path("/create")
     @Transactional
-    public long create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
+    public Long create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
         //Recording the groups id and url in db
         this.hubRepo.persist(group_url);
         this.serveURLs();
-
-        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-        uriBuilder.path(Long.toString(group_url.id));
-        
+        //UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+        //uriBuilder.path(Long.toString(group_url.id));
         return group_url.id;
     }
 
@@ -79,7 +79,7 @@ public class HubRoutes {
      */
     private void serveURLs() {
         Map<Long, URL> groupURLs = this.hubRepo.getGroupUrls();
-        for (long id : groupURLs.keySet()) {
+        for (Long id : groupURLs.keySet()) {
             //Post 
             URL url = this.hubRepo.getGroupUrls().get(id);
             WebClient client = WebClient.create(url.toString());
@@ -96,6 +96,20 @@ public class HubRoutes {
                 //.get().accept(MediaType.APPLICATION_JSON)
             }
             //change
+    }
+
+    @PUT
+    @Path("/update/{id}")
+    @Transactional
+    public long update(GroupURL group_url, @Context UriInfo uriInfo ,@PathParam("id") Long id){
+        URL url = this.hubRepo.getGroupUrls().get(id);
+        if(url == null){
+            throw new NotFoundException();
+        }
+        this.hubRepo.getGroupUrls().put(id, group_url.url);
+        this.hubRepo.persist(group_url);
+        this.serveURLs();
+        return group_url.id; 
     }
 
     
