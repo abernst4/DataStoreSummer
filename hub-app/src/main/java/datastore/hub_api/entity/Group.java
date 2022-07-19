@@ -1,4 +1,4 @@
-package com.geekcap.javaworld.jpa;
+package hub_api.entity;
 
 import java.net.InetAddress;
 
@@ -9,7 +9,7 @@ import java.util.*;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
-public class GroupStuff extends PanacheEntityBase {// why isn't there an error here
+public class GroupStuff extends PanacheEntityBase {
     @Id
     public long groupId;
 
