@@ -2,19 +2,20 @@ package datastore.hub_api.route;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
-
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.persistence.Entity;
-
 import javax.transaction.Transactional;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 
 import java.util.*;
@@ -30,7 +31,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import reactor.core.publisher.Mono;
 
-@Path("/hub")
+@Path("hub")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class HubRoutes {
@@ -54,6 +55,7 @@ public class HubRoutes {
      * @throws JsonProcessingException
      */
     @POST
+    @Path("/create")
     @Transactional
     public long create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
         //Recording the groups id and url in db
@@ -96,6 +98,39 @@ public class HubRoutes {
             //change
     }
 
+    
+
+    /**
+     * @throws IllegalArgumentException
+     * @param id
+     */
+    @DELETE
+    @Path("/delete/{id}")
+    @Transactional
+    public Response deleteById(@PathParam("id") Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
+        URL deleted_url = hubRepo.findById(id).url;
+        boolean deleted = hubRepo.deleteById(id);
+        if (!deleted || deleted_url == null) {
+            return Response.status(BAD_REQUEST).build();
+        }
+        for (URL url : Arrays.asList(deleted_url)) {
+            WebClient client = WebClient.create(url.toString());
+            client
+                .post()
+                .uri("")
+                .body(
+                    Mono.just(hubRepo.getGroupUrls()), 
+                    Map.class
+                )
+                .retrieve()
+                .bodyToMono(String.class).block();
+        }    
+        return Response.noContent().build();
+    }
+
     /**
      * Converts Java group objects, whihc contian ids and urls, and converts them into a database table
      */
@@ -110,30 +145,5 @@ public class HubRoutes {
             return IdMap;
         }
     }
-
-    /**
-     * What is this method doing?
-     * @param otherURLs
-     */
-    /*
-    private void recordOtherURLs(List<URL> otherURLs) {
-        this.recordURL();
-        for (URL url : otherURLs) {
-            WebClient client = WebClient.create(url.toString());
-            client
-                .post()
-                .uri("")
-                .body(
-                    Mono.just(hubRepo.getGroupUrls()), 
-                    Map.class
-                )
-                .retrieve()
-                .bodyToMono(String.class).block();
-        }
-        return;
-    }
-     */
-
-
 }
 
