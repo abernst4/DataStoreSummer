@@ -78,13 +78,10 @@ public class UserRoute {
     
     @PUT
     @Path("/{group-id}/users/{id}")
-    //@Path("/update/user")
     @Transactional
     public Response update(
                                 @PathParam("group-id") Long groupId,
                                 @PathParam("id") Long id,
-                                //@QueryParam("group-id") Long groupId,
-                                //@QueryParam("id") Long id,
                                 User user,
                                 @Context UriInfo uriInfo
                             )
