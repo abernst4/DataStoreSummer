@@ -57,6 +57,10 @@ public class GroupRoutes {
     @Transactional
      public Response create(Group group) {
         groupRepo.persist(group);
+
+        //Add web client logic and incorperate the hubUrl from application.properties
+
+
         if (groupRepo.isPersistent(group)) {
             return Response.status(Status.CREATED).entity(group).build();
         }
@@ -70,4 +74,12 @@ public class GroupRoutes {
         boolean deleted = groupRepo.deleteById(id);
         return deleted ? Response.noContent().build() : Response.status(BAD_REQUEST).build();
     }  
+
+    /**
+     * 
+     */
+
+
+
+     
 }
