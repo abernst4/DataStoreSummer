@@ -1,6 +1,6 @@
-package com.geekcap.javaworld.jpa;
+package datastore.hub_api.route;
 
-import hup-app.src.main.java.com.geekcap.javaworld.jpa.GroupStuff;
+import GroupStuff;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -37,17 +37,8 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 @Consumes(MediaType.APPLICATION_JSON)
 public class Hub {
 
-    public static void main(String[] args) throws UnknownHostException {
-        System.out.println(InetAddress.getLocalHost());
-        System.out.println(InetAddress.getLocalHost().getHostAddress());
-    }
-
-    @GET
-    public String testGet() {
-        System.out.println("called server");
-        return "successfully called the server";
-    }
-
+    @Inject
+    GroupRepository groupRepo;
 
     @POST
     @Transactional
