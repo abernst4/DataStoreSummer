@@ -59,7 +59,7 @@ public class GroupRoutes {
         groupRepo.persist(group);
 
         //Add web client logic and incorperate the hubUrl from application.properties
-
+        //Made change
 
         if (groupRepo.isPersistent(group)) {
             return Response.status(Status.CREATED).entity(group).build();
