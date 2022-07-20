@@ -33,7 +33,13 @@ import reactor.core.publisher.Mono;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class HubRoutes {
-    @Inject HubRepository hubRepo; 
+    @Inject 
+    HubRepository hubRepo; 
+
+    /**
+     * @param id
+     * @return
+     */
     @GET
     public List<GroupURL> getURLS(@QueryParam("id")Long id){
        if(id == null){
@@ -83,7 +89,7 @@ public class HubRoutes {
             WebClient client = WebClient.create(url.toString());
             client
                 .post()
-                .uri("/servers")
+                .uri("/")
                 .header("Authorization", "Bearer MY_SECRET_TOKEN")
                 .body(Mono.just(groupURLs), Map.class)
                 .retrieve()
@@ -96,6 +102,12 @@ public class HubRoutes {
             //change
     }
 
+    /**
+     * @param group_url
+     * @param uriInfo
+     * @param id
+     * @return
+     */
     @PUT
     @Path("/update/{id}")
     @Transactional
@@ -138,7 +150,8 @@ public class HubRoutes {
                     Map.class
                 )
                 .retrieve()
-                .bodyToMono(String.class).block();
+                .bodyToMono(String.class)
+                .block();
         }    
         return Response.noContent().build();
     }
