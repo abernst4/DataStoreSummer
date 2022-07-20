@@ -110,7 +110,7 @@ public class GroupRoutes {
      */
     @POST
     @Transactional
-     public Response create(Group group) {
+     public Response create(Group group, @Context UriInfo uriInfo) {
         groupRepo.persist(group);
 
         //Add web client logic and incorperate the hubUrl from application.properties
