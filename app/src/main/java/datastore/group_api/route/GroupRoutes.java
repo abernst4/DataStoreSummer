@@ -110,12 +110,11 @@ public class GroupRoutes {
      */
     @POST
     @Transactional
-    public Response create(Group group, @Context UriInfo uriInfo) throws UnknownHostException, MalformedURLException {
-        if (group == null) {
-            throw new IllegalArgumentException();
-        }   
+     public Response create(Group group) {
+        groupRepo.persist(group);
 
-        group.url = new URL("https://" + this.URL);
+        //Add web client logic and incorperate the hubUrl from application.properties
+        //Made change
 
         //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
