@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import datastore.hub_api.route.HubRoutes.GroupURL;
+import datastore.hub_api.entity.GroupURL;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 /**
      * Converts Java group objects, whihc contian ids and urls, and converts them into a database table

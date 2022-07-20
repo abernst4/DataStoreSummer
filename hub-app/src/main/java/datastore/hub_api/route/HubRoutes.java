@@ -1,4 +1,5 @@
 package datastore.hub_api.route;
+import datastore.hub_api.entity.GroupURL;
 import datastore.hub_api.repository.HubRepository;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -11,43 +12,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.persistence.Entity;
 import javax.transaction.Transactional;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-
-import java.lang.reflect.Array;
 import java.net.URL;
-
 import java.util.*;
-
 import org.springframework.web.reactive.function.client.WebClient;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-
-import javax.enterprise.context.ApplicationScoped;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-
+import javax.inject.Inject;
 import reactor.core.publisher.Mono;
 
 @Path("hub")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class HubRoutes {
-
-    /**
-     * Holds group ids and urls
-     */
-    @Entity
-    public class GroupURL extends PanacheEntity{
-        public URL url; 
-    }    
-        
-    private HubRepository hubRepo = new HubRepository();
-
+    
+    @Inject HubRepository hubRepo; 
 
     /**
      * 
