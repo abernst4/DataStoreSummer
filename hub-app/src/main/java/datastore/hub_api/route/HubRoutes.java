@@ -7,16 +7,23 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 import javax.transaction.Transactional;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.inject.Inject;
@@ -26,8 +33,18 @@ import reactor.core.publisher.Mono;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class HubRoutes {
-    
     @Inject HubRepository hubRepo; 
+    @GET
+    public List<GroupURL> getURLS(@QueryParam("id")Long id){
+       if(id == null){
+        return this.hubRepo.listAll();
+       }
+       List<GroupURL> list = new ArrayList<>();
+       GroupURL url = this.hubRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
+       list.add(url);
+       return list; 
+    }
+
 
     /**
      * 
@@ -39,13 +56,14 @@ public class HubRoutes {
     @POST
     @Path("/create")
     @Transactional
-    public Long create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
+    public Response create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
         //Recording the groups id and url in db
         this.hubRepo.persist(group_url);
         this.serveURLs();
         //UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         //uriBuilder.path(Long.toString(group_url.id));
-        return group_url.id;
+        System.out.println(hubRepo.isPersistent(group_url));
+        return hubRepo.isPersistent(group_url)? Response.status(Status.CREATED).entity(group_url).build(): Response.status(Status.NOT_FOUND).build();
     }
 
     /**
