@@ -5,6 +5,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+
+import java.net.URL;
 import java.util.*;
 import datastore.user_api.entity.User;
 
@@ -14,6 +16,7 @@ public class Group extends PanacheEntity{
     public String name;
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
     public List<User> users;
+    public URL url; 
 }
 
 

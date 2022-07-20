@@ -1,6 +1,16 @@
 package datastore.group_api.route;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
+
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
+//import javax.resource.spi.ConfigProperty;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -9,22 +19,44 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+
+import org.springframework.web.reactive.function.client.WebClient;
 import datastore.group_api.database.GroupRepository;
 import datastore.group_api.entity.Group;
 
-@Path("/groups")
+//import reactor.core.publisher.Mono;
+
+@Path("/groups/")
+@ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GroupRoutes {
-    @Inject GroupRepository groupRepo;
+
+    @Inject 
+    GroupRepository groupRepo;
+
+    @ConfigProperty(name = "URL")
+    String URL;
+
+    @ConfigProperty(name = "hubURL")
+    String hubURL;
+
+
+    /**
+     * @param name
+     * @return
+     */
     @GET
     public List<Group> getAll(@QueryParam("name") String name) {
         if(name == null){
@@ -33,53 +65,114 @@ public class GroupRoutes {
         return groupRepo.findByName(name);
     }
 
+    /**
+     * @param id
+     * @return
+     */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Group getById(@PathParam("id") Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }            
         return groupRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
 
+    /**
+     * @param id
+     * @param gr
+     * @return
+     */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response update(@PathParam("id") Long id, Group gr) {
+    public Response update(@PathParam("id") Long id, Group updated_group) {
+        if (id == null || updated_group == null) {
+            throw new IllegalArgumentException();
+        }        
         Group group = groupRepo.findById(id);
         if (group == null) {
             throw new NotFoundException();
         }
-        group.name = gr.name;
+        group.name = updated_group.name;
         groupRepo.persist(group);
-        return Response.status(Status.OK).entity(group).build();
+        return Response .status(Status.OK)
+                        .entity(group)
+                        .build();
     }
     
+    /**
+     * @param group
+     * @return
+     * @throws UnknownHostException
+     * @throws MalformedURLException
+     */
     @POST
     @Transactional
-     public Response create(Group group) {
-        groupRepo.persist(group);
+    public Response create(Group group, @Context UriInfo uriInfo) throws UnknownHostException, MalformedURLException {
+        if (group == null) {
+            throw new IllegalArgumentException();
+        }   
 
+        group.url = new URL("https://" + this.URL);
+
+        //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
-
-
+        WebClient client = WebClient.create("https://" + hubURL);
+        group.id = client
+                        .post()
+                        .uri("hub")
+                        //.contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue("")//{url"\"" + group.url + "}
+                        .header("Authorization", "Bearer MY_SECRET_TOKEN")
+                        .retrieve()
+                        .bodyToMono(Long.class)
+                        .block();
+        
+        groupRepo.persist(group);
         if (groupRepo.isPersistent(group)) {
-            return Response.status(Status.CREATED).entity(group).build();
+            return Response
+                            .created(uriInfo
+                                .getAbsolutePathBuilder()
+                                .path(Long.toString(group.id))
+                                .build()
+                            )
+                            .entity(group)
+                            .status(Status.CREATED)
+                            .build();
         }
         return Response.status(NOT_FOUND).build();
     } 
 
+    /**
+     * @param id
+     * @return
+     */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     @Transactional
     public Response deleteById(@PathParam("id") Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }        
         boolean deleted = groupRepo.deleteById(id);
-        return deleted ? Response.noContent().build() : Response.status(BAD_REQUEST).build();
+        
+        if (!deleted) {
+            return Response.status(BAD_REQUEST).build();
+        }
+        WebClient client = WebClient.create("https://" + hubURL);
+        client.delete()
+                //.post()
+                .uri("/hub/" + id)
+                .retrieve()           
+                .bodyToMono(Long.class)
+                .block();
+        return Response.noContent().build();
     }  
 
     /**
      * 
      */
-
-
-
      
 }
