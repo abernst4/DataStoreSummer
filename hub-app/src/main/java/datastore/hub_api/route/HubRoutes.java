@@ -29,7 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.inject.Inject;
 import reactor.core.publisher.Mono;
 
-@Path("hub")
+@Path("/hub")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class HubRoutes {
@@ -62,7 +62,8 @@ public class HubRoutes {
     @POST
     @Path("/post")
     @Transactional
-    public Long create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
+    public Long create(URL url, @Context UriInfo uriInfo) throws JsonProcessingException {
+        GroupURL group_url = new GroupURL(url);
         //Recording the groups id and url in db
         this.hubRepo.persist(group_url);
         this.serveURLs();
