@@ -1,5 +1,6 @@
 package datastore.group_api.route;
 import java.net.MalformedURLException;
+import java.net.URL;
 //import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -33,6 +34,8 @@ import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import org.springframework.web.reactive.function.client.WebClient;
 import datastore.group_api.database.GroupRepository;
 import datastore.group_api.entity.Group;
+import reactor.core.publisher.Mono;
+
 
 //import reactor.core.publisher.Mono;
 
@@ -118,16 +121,25 @@ public class GroupRoutes {
         //Made change
         //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
-        WebClient client = WebClient.create("http://localhost:8081"); //localhost:8081
+        WebClient client = WebClient.create("http://localhost:8081/hub"); //localhost:8081
         group.id = client
                         .post()
+<<<<<<< HEAD
                         .uri("/hub/post")
                         //.contentType(())
                         .bodyValue(group.url)
                         .header("Authorization", "Bearer MY_SECRET_TOKEN")
+=======
+                        .uri("/post")
+                        .body(Mono.just(group.url), URL.class)
+>>>>>>> 3be843f332670526ed472b6f87835d77ccc6afde
                         .retrieve()
                         .bodyToMono(Long.class)
                         .block();
+
+                                                //.contentType(())
+                        //.bodyValue()//{url"\"" + group.url + "}
+                        //.header("Authorization", "Bearer MY_SECRET_TOKEN")
         
         if (groupRepo.isPersistent(group)) {
             return Response
