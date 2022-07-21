@@ -17,7 +17,7 @@ public class Group extends PanacheEntity{
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
     public List<User> users;
     public URL url; 
-    
+//    public Map<Long, URL> map; 
 }
 
 

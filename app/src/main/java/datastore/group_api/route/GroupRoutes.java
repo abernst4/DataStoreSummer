@@ -124,15 +124,8 @@ public class GroupRoutes {
         WebClient client = WebClient.create("http://localhost:8081/hub"); //localhost:8081
         group.id = client
                         .post()
-<<<<<<< HEAD
-                        .uri("/hub/post")
-                        //.contentType(())
-                        .bodyValue(group.url)
-                        .header("Authorization", "Bearer MY_SECRET_TOKEN")
-=======
                         .uri("/post")
                         .body(Mono.just(group.url), URL.class)
->>>>>>> 3be843f332670526ed472b6f87835d77ccc6afde
                         .retrieve()
                         .bodyToMono(Long.class)
                         .block();
