@@ -116,7 +116,6 @@ public class GroupRoutes {
         
         //Add web client logic and incorperate the hubUrl from application.properties
         //Made change
-
         //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
         WebClient client = WebClient.create("http://localhost:8081"); //localhost:8081
@@ -124,7 +123,7 @@ public class GroupRoutes {
                         .post()
                         .uri("/hub/post")
                         //.contentType(())
-                        .bodyValue(group.url)//{url"\"" + group.url + "}
+                        .bodyValue(group.url)
                         .header("Authorization", "Bearer MY_SECRET_TOKEN")
                         .retrieve()
                         .bodyToMono(Long.class)
