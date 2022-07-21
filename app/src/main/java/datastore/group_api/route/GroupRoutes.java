@@ -119,14 +119,20 @@ public class GroupRoutes {
         
         //Add web client logic and incorperate the hubUrl from application.properties
         //Made change
-
         //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
         WebClient client = WebClient.create("http://localhost:8081/hub"); //localhost:8081
         group.id = client
                         .post()
+<<<<<<< HEAD
+                        .uri("/hub/post")
+                        //.contentType(())
+                        .bodyValue(group.url)
+                        .header("Authorization", "Bearer MY_SECRET_TOKEN")
+=======
                         .uri("/post")
                         .body(Mono.just(group.url), URL.class)
+>>>>>>> 3be843f332670526ed472b6f87835d77ccc6afde
                         .retrieve()
                         .bodyToMono(Long.class)
                         .block();
