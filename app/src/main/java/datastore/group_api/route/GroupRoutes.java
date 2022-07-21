@@ -30,7 +30,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-
 import org.springframework.web.reactive.function.client.WebClient;
 import datastore.group_api.database.GroupRepository;
 import datastore.group_api.entity.Group;
@@ -52,7 +51,8 @@ public class GroupRoutes {
     @ConfigProperty(name = "hubURL")
     String hubURL;
 
-
+    @ConfigProperty(name = "Port")
+    int Port; 
     /**
      * @param name
      * @return
@@ -102,6 +102,7 @@ public class GroupRoutes {
                         .build();
     }
     
+    
     /**
      * @param group
      * @return
@@ -112,24 +113,23 @@ public class GroupRoutes {
     @Transactional
      public Response create(Group group, @Context UriInfo uriInfo) {
         groupRepo.persist(group);
-
+        
         //Add web client logic and incorperate the hubUrl from application.properties
         //Made change
 
         //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
-        WebClient client = WebClient.create("https://" + hubURL);
+        WebClient client = WebClient.create("http://localhost:8081"); //localhost:8081
         group.id = client
                         .post()
-                        .uri("hub")
-                        //.contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue("")//{url"\"" + group.url + "}
+                        .uri("/hub/post")
+                        //.contentType(())
+                        .bodyValue(group.url)//{url"\"" + group.url + "}
                         .header("Authorization", "Bearer MY_SECRET_TOKEN")
                         .retrieve()
                         .bodyToMono(Long.class)
                         .block();
         
-        groupRepo.persist(group);
         if (groupRepo.isPersistent(group)) {
             return Response
                             .created(uriInfo
@@ -160,7 +160,7 @@ public class GroupRoutes {
         if (!deleted) {
             return Response.status(BAD_REQUEST).build();
         }
-        WebClient client = WebClient.create("https://" + hubURL);
+        WebClient client = WebClient.create("http://localhost:8081"); //hubURL
         client.delete()
                 //.post()
                 .uri("/hub/" + id)
