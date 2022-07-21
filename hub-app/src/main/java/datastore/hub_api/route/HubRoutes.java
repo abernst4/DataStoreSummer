@@ -60,16 +60,16 @@ public class HubRoutes {
      * @throws JsonProcessingException
      */
     @POST
-    @Path("/create")
+    @Path("/post")
     @Transactional
-    public Response create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
+    public Long create(GroupURL group_url, @Context UriInfo uriInfo) throws JsonProcessingException {
         //Recording the groups id and url in db
         this.hubRepo.persist(group_url);
         this.serveURLs();
         //UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         //uriBuilder.path(Long.toString(group_url.id));
         System.out.println(hubRepo.isPersistent(group_url));
-        return hubRepo.isPersistent(group_url)? Response.status(Status.CREATED).entity(group_url).build(): Response.status(Status.NOT_FOUND).build();
+        return group_url.id;
     }
 
     /**
