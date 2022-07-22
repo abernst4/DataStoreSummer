@@ -10,5 +10,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 public class GroupURL extends PanacheEntity{
     public URL url; 
    public GroupURL(){}
-   public GroupURL(URL url){}
+   public GroupURL(URL url){
+    url=this.url;
+   }
 }   

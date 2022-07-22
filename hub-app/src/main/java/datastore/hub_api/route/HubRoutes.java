@@ -24,10 +24,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.logging.Logger;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.inject.Inject;
 import reactor.core.publisher.Mono;
+
+
 
 @Path("/hub")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,6 +38,8 @@ import reactor.core.publisher.Mono;
 public class HubRoutes {
     @Inject 
     HubRepository hubRepo; 
+
+    private Logger logger =Logger.getLogger(HubRoutes.class);
 
     /**
      * @param id
@@ -63,7 +68,8 @@ public class HubRoutes {
     @Path("/post")
     @Transactional
     public Long create(URL url, @Context UriInfo uriInfo) throws JsonProcessingException {
-        GroupURL group_url = new GroupURL(url);
+        GroupURL group_url = new GroupURL();
+        group_url.url=url; 
         //Recording the groups id and url in db
         this.hubRepo.persist(group_url);
         this.serveURLs();
@@ -86,10 +92,11 @@ public class HubRoutes {
         Map<Long, URL> groupURLs = this.hubRepo.getGroupUrls();
         for (Long id : groupURLs.keySet()) {
             //Post 
+            //logger.info(id);
             URL url = this.hubRepo.getGroupUrls().get(id);
             WebClient client = WebClient.create(url.toString());
             client
-                .post()
+                .put()
                 .uri("/")
                 .header("Authorization", "Bearer MY_SECRET_TOKEN")
                 .body(Mono.just(groupURLs), Map.class)
