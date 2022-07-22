@@ -121,14 +121,14 @@ public class GroupRoutes {
         //Made change
         //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
-        WebClient client = WebClient.create("http://localhost:8081/hub"); //localhost:8081
-        group.id = client
-                        .post()
-                        .uri("/post")
-                        .body(Mono.just(group.url), URL.class)
-                        .retrieve()
-                        .bodyToMono(Long.class)
-                        .block();
+        //WebClient client = WebClient.create("http://localhost:8081/hub"); //localhost:8081
+        //group.id = client
+        //                .post()
+                        //.uri("/post")
+                        //.body(Mono.just(group.url), URL.class)
+                        //.retrieve()
+                        //.bodyToMono(Long.class)
+                        //.block();
 
                                                 //.contentType(())
                         //.bodyValue()//{url"\"" + group.url + "}
