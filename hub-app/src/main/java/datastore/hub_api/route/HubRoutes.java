@@ -18,13 +18,14 @@ import javax.ws.rs.core.UriInfo;
 //import javax.ws.rs.core.Response.Status;
 import javax.transaction.Transactional;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.logging.Logger;
+//import org.jboss.logging.Logger;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.inject.Inject;
@@ -39,7 +40,7 @@ public class HubRoutes {
     @Inject 
     HubRepository hubRepo; 
 
-    private Logger logger =Logger.getLogger(HubRoutes.class);
+    //private Logger logger = Logger.getLogger(HubRoutes.class);
 
     /**
      * @param id
@@ -63,19 +64,32 @@ public class HubRoutes {
      * @param uriInfo
      * @return group_url.id 
      * @throws JsonProcessingException
+     * groupFields contains the fields for the group object just created 
+     * index[0] is the group URL
+     * index[1] is the group id
      */
     @POST
     @Path("/post")
     @Transactional
-    public Long create(URL url, @Context UriInfo uriInfo) throws JsonProcessingException {
+    public Long create(Object[] groupFields,  @Context UriInfo uriInfo) throws JsonProcessingException {
+        if(groupFields == null){
+            throw new IllegalArgumentException();
+        }
         GroupURL group_url = new GroupURL();
-        group_url.url=url; 
+            URL url=null;
+            try {
+                url = new URL(groupFields[0].toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            group_url.url = url;
+            group_url.id=(long)((int)groupFields[1]);
+
         //Recording the groups id and url in db
         this.hubRepo.persist(group_url);
         this.serveURLs();
         //UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         //uriBuilder.path(Long.toString(group_url.id));
-        System.out.println(hubRepo.isPersistent(group_url));
         return group_url.id;
     }
 
@@ -97,12 +111,12 @@ public class HubRoutes {
             WebClient client = WebClient.create(url.toString());
             client
                 .put()
-                .uri("/")
+                .uri("{id}/updateMap", id)
                 .header("Authorization", "Bearer MY_SECRET_TOKEN")
                 .body(Mono.just(groupURLs), Map.class)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+                .retrieve();
+                //.bodyToMono(Void.class)
+                //.block();
                 //.accept(MediaType.APPLICATION_JSON)                
                 //.contentType(MediaType.APPLICATION_FORM_URLENCODED)                
                 //.get().accept(MediaType.APPLICATION_JSON)
@@ -137,7 +151,7 @@ public class HubRoutes {
      * @param id
      */
     @DELETE
-    @Path("/delete/{id}")
+    @Path("/{id}")
     @Transactional
     public Response deleteById(@PathParam("id") Long id) {
         if (id == null) {
@@ -145,22 +159,28 @@ public class HubRoutes {
         }
         URL deleted_url = hubRepo.findById(id).url;
         boolean deleted = hubRepo.deleteById(id);
-        if (!deleted || deleted_url == null) {
-            return Response.status(BAD_REQUEST).build();
-        }
-        for (URL url : Arrays.asList(deleted_url)) {
+        //if(deleted==false){
+            //throw new IllegalStateException("why is this not delete");
+       // }
+      // if (!deleted || deleted_url == null) {
+            //return Response.status(BAD_REQUEST).build();
+       // }
+        //Arrays.asList(deleted_url)
+          
+        for (URL url : this.hubRepo.getGroupUrls().values()) {
             WebClient client = WebClient.create(url.toString());
             client
-                .post()
-                .uri("")
+                .put()
+                .uri("/updateMap")
                 .body(
                     Mono.just(hubRepo.getGroupUrls()), 
                     Map.class
                 )
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+                .retrieve();
+                //.bodyToMono(String.class)
+                //.block();
         }    
+        
         return Response.noContent().build();
     }
 }
