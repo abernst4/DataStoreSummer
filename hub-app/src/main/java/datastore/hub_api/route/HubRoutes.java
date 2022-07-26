@@ -113,7 +113,7 @@ public class HubRoutes {
             WebClient client = WebClient.create(url.toString());
             client
                 .post()
-                .uri("updateMap")                .header("Authorization", "Bearer MY_SECRET_TOKEN")
+                .uri("{id}/updateMap", id)                .header("Authorization", "Bearer MY_SECRET_TOKEN")
                 .body(Mono.just(groupURLs), Map.class)
                 .retrieve()
                 .bodyToMono(Void.class)
