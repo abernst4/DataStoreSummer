@@ -1,3 +1,4 @@
+/**
 package datastore.group_api.route;
 
 import java.net.MalformedURLException;
@@ -33,7 +34,14 @@ public class Server implements QuarkusApplication {
     @ConfigProperty(name = "hubURL")
     String hubURL;
 
-    /**
+    @Override
+    public int run(String... args) throws Exception {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+}
+
+    
      * @param se
      * @throws MalformedURLException
      
@@ -59,3 +67,4 @@ public class Server implements QuarkusApplication {
         return 0;
     }
 }
+**/

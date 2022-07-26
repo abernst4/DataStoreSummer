@@ -1,6 +1,6 @@
 package datastore.group_api.route;
 
-import datastore.group_api.route.Server;
+//import datastore.group_api.route.Server;
 import datastore.group_api.database.GroupRepository;
 import datastore.group_api.entity.Group;
 //import datastore.group_api.entity.GroupURLs;
@@ -39,10 +39,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
+import org.springframework.http.ResponseEntity;
 //import org.springframework.http.HttpMethod;
 //import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -59,8 +61,8 @@ public class GroupRoutes {
     @Inject 
     GroupRepository groupRepo;
 
-    @Inject 
-    GroupURL group_urls;
+    //@Inject 
+    //GroupURL group_urls;
     
     //@Inject 
     //Server server;
@@ -76,6 +78,7 @@ public class GroupRoutes {
     @ConfigProperty(name = "Port")
     int Port; 
 
+    
     //Map<Long, URL> groupURLs = new HashMap<>(); 
     
    @GET
@@ -83,11 +86,11 @@ public class GroupRoutes {
         return Response.status(Status.OK).entity(groupRepo.findAll().firstResult()).build();
    }
 
-    @GET
-    @Path("redirect")
-    public Response getOnServer(@QueryParam("groups") long[] groups, @Context UriInfo uriInfo) throws URISyntaxException {
-        return group_urls.redirect(groups, uriInfo);
-    }
+    //@GET
+    //@Path("redirect")
+    //public Response getOnServer(@QueryParam("groups") long[] groups, @Context UriInfo uriInfo) throws URISyntaxException {
+        //return group_urls.redirect(groups, uriInfo);
+    //}
 
     /**
      * @param name
@@ -107,14 +110,33 @@ public class GroupRoutes {
      */
     @GET
     @Path("{id}")
-    public Group getById(@PathParam("id") Long id, @Context UriInfo uriInfo) {
+    public Response getById(@PathParam("id") Long id, @Context UriInfo uriInfo) {
         if (id == null) {
             throw new IllegalArgumentException();
-        }            
-        if (group_urls.group == null || id != group_urls.group.id) {
-            return group_urls.redirect(id, uriInfo);
-        }
-        return groupRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
+        } 
+        Group group = this.groupRepo.findById(id);
+       if(group != null){
+        return Response.status(Status.FOUND).entity(group).build();
+       }
+       
+       //URL url = this.groups.urls.get(id);
+       //WebClient client = WebClient.create(url.toString());
+       //Group g2 = client.get().uri("{id}/", id).retrieve().bodyToMono(Group.class).block();
+       //return g2; 
+      // group_urls.group == null ||
+        //if (id != group.group.id) {
+            //return groups.redirect(id, uriInfo);
+        //}
+        URL url = groups.urls.get(id);
+            if(url!= null){
+               WebClient client = WebClient.create(url.toString());
+       Group g2 = client.get().uri("{id}/", id).retrieve().bodyToMono(Group.class).block();
+       return Response.status(Status.TEMPORARY_REDIRECT).entity(g2).build(); 
+            }
+        
+
+            return Response.status(Status.NOT_FOUND).build();
+        //return groupRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
 
     /**
@@ -129,10 +151,11 @@ public class GroupRoutes {
     public Response update(@PathParam("id") Long id, Group updated_group, @Context UriInfo uriInfo) throws URISyntaxException {
         if (id == null || updated_group == null) {
             throw new IllegalArgumentException();
-        }        
-        if (group_urls.group == null || id != group_urls.group.id) {
-            return group_urls.redirect(id, uriInfo);
-        }
+        }     
+        //group_urls.group == null ||   
+        //if (group_urls.group == null || id != group_urls.group.id) {
+            //return group_urls.redirect(id, uriInfo);
+       //}
         Group group = groupRepo.findById(id);
         if (group == null) {
             throw new NotFoundException();
@@ -145,9 +168,9 @@ public class GroupRoutes {
     }
     
     @POST
-    @Path("/updateMap")
+    @Path("{id}/updateMap")
     @Transactional
-    public void updateMaps(Map<Long, URL> groupMap){
+    public void updateMaps(@PathParam("id") Long id,  Map<Long, URL> groupMap){
         if ( groupMap == null) {
             throw new IllegalArgumentException();
         }
@@ -240,9 +263,9 @@ public class GroupRoutes {
         }  
         //this.groups.urls.remove(id);
         
-        if (group_urls.group == null || id != group_urls.group.id) {
-            return group_urls.redirect(id, uriInfo);
-        }
+        //if (group_urls.group == null || id != group_urls.group.id) {
+            //return group_urls.redirect(id, uriInfo);
+       // }
         
         boolean deleted = groupRepo.deleteById(id);
         
