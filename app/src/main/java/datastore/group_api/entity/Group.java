@@ -28,5 +28,3 @@ public class Group extends PanacheEntity {
    // public GroupURLs urlMap; 
         
 }
-
-

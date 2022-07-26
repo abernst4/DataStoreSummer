@@ -1,5 +1,6 @@
 package datastore.group_api.route;
 
+import datastore.group_api.route.Server;
 import datastore.group_api.database.GroupRepository;
 import datastore.group_api.entity.Group;
 //import datastore.group_api.entity.GroupURLs;
@@ -7,6 +8,7 @@ import datastore.group_api.map.GroupURL;
 
 //import java.lang.ProcessBuilder.Redirect;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -54,15 +56,14 @@ import reactor.core.publisher.Mono;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GroupRoutes {
-
     @Inject 
     GroupRepository groupRepo;
 
-    //private Group group;
-    //private GroupURLs group_urls;
+    @Inject 
+    GroupURL group_urls;
     
-   //@Inject 
-   // Server server;
+    //@Inject 
+    //Server server;
     @Inject
     GroupURL groups; 
     
@@ -77,16 +78,16 @@ public class GroupRoutes {
 
     //Map<Long, URL> groupURLs = new HashMap<>(); 
     
-   // @GET
-        //public Response getOnServer() {
-        //return Response.status(Status.OK).entity(groupRepo.findAll().firstResult()).build();
-   // }
+   @GET
+    public Response getOnServer() {
+        return Response.status(Status.OK).entity(groupRepo.findAll().firstResult()).build();
+   }
 
-    //@GET
-    //@Path("")
-    //public Response getOnServer(@QueryParam("groups") long[] groups, @Context UriInfo uriInfo)  {
-    //    return server.redirect(groups, uriInfo);
-    // }
+    @GET
+    @Path("redirect")
+    public Response getOnServer(@QueryParam("groups") long[] groups, @Context UriInfo uriInfo) throws URISyntaxException {
+        return group_urls.redirect(groups, uriInfo);
+    }
 
     /**
      * @param name
@@ -106,10 +107,13 @@ public class GroupRoutes {
      */
     @GET
     @Path("{id}")
-    public Group getById(@PathParam("id") Long id) {
+    public Group getById(@PathParam("id") Long id, @Context UriInfo uriInfo) {
         if (id == null) {
             throw new IllegalArgumentException();
         }            
+        if (group_urls.group == null || id != group_urls.group.id) {
+            return group_urls.redirect(id, uriInfo);
+        }
         return groupRepo.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
 
@@ -122,10 +126,13 @@ public class GroupRoutes {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response update(@PathParam("id") Long id, Group updated_group) {
+    public Response update(@PathParam("id") Long id, Group updated_group, @Context UriInfo uriInfo) throws URISyntaxException {
         if (id == null || updated_group == null) {
             throw new IllegalArgumentException();
         }        
+        if (group_urls.group == null || id != group_urls.group.id) {
+            return group_urls.redirect(id, uriInfo);
+        }
         Group group = groupRepo.findById(id);
         if (group == null) {
             throw new NotFoundException();
@@ -141,7 +148,6 @@ public class GroupRoutes {
     @Path("/updateMap")
     @Transactional
     public void updateMaps(Map<Long, URL> groupMap){
-
         if ( groupMap == null) {
             throw new IllegalArgumentException();
         }
@@ -175,7 +181,6 @@ public class GroupRoutes {
     @Path("map")
     public Map<Long, URL> getMap(){
         return this.groups.urls;
-        //groups.urls; 
     }
 
     /**
@@ -234,6 +239,10 @@ public class GroupRoutes {
             throw new IllegalArgumentException();
         }  
         //this.groups.urls.remove(id);
+        
+        if (group_urls.group == null || id != group_urls.group.id) {
+            return group_urls.redirect(id, uriInfo);
+        }
         
         boolean deleted = groupRepo.deleteById(id);
         

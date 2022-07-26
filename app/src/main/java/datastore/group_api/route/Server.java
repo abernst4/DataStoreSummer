@@ -1,4 +1,3 @@
-/* 
 package datastore.group_api.route;
 
 import java.net.MalformedURLException;
@@ -59,4 +58,4 @@ public class Server implements QuarkusApplication {
         Quarkus.waitForExit();
         return 0;
     }
-}*/
+}
