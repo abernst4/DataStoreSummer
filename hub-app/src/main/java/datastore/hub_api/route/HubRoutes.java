@@ -107,21 +107,22 @@ public class HubRoutes {
         for (Long id : groupURLs.keySet()) {
             //Post 
             //logger.info(id);
+
             URL url = this.hubRepo.getGroupUrls().get(id);
+            if(url != null){
             WebClient client = WebClient.create(url.toString());
             client
-                .put()
-                .uri("{id}/updateMap", id)
-                .header("Authorization", "Bearer MY_SECRET_TOKEN")
+                .post()
+                .uri("updateMap")                .header("Authorization", "Bearer MY_SECRET_TOKEN")
                 .body(Mono.just(groupURLs), Map.class)
-                .retrieve();
-                //.bodyToMono(Void.class)
-                //.block();
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
                 //.accept(MediaType.APPLICATION_JSON)                
                 //.contentType(MediaType.APPLICATION_FORM_URLENCODED)                
                 //.get().accept(MediaType.APPLICATION_JSON)
             }
-            //change
+        }
     }
 
     /**
@@ -143,6 +144,7 @@ public class HubRoutes {
         this.serveURLs();
         return group_url.id; 
     }
+
 
     
 
