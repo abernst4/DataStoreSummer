@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,8 @@ import javax.ws.rs.core.Response.Status;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
-import org.springframework.http.HttpMethod;
+//import org.springframework.http.HttpMethod;
+//import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -56,9 +58,14 @@ public class GroupRoutes {
     @Inject 
     GroupRepository groupRepo;
 
-    private Group group;
+    //private Group group;
     //private GroupURLs group_urls;
-
+    
+   //@Inject 
+   // Server server;
+    @Inject
+    GroupURL groups; 
+    
     @ConfigProperty(name = "URL")
     String URL;
 
@@ -67,9 +74,20 @@ public class GroupRoutes {
 
     @ConfigProperty(name = "Port")
     int Port; 
-    
 
-   GroupURL map = new GroupURL(); 
+    //Map<Long, URL> groupURLs = new HashMap<>(); 
+    
+   // @GET
+        //public Response getOnServer() {
+        //return Response.status(Status.OK).entity(groupRepo.findAll().firstResult()).build();
+   // }
+
+    //@GET
+    //@Path("")
+    //public Response getOnServer(@QueryParam("groups") long[] groups, @Context UriInfo uriInfo)  {
+    //    return server.redirect(groups, uriInfo);
+    // }
+
     /**
      * @param name
      * @return
@@ -119,18 +137,17 @@ public class GroupRoutes {
                         .build();
     }
     
-    @PUT 
-    @Path("{id}/updateMap")
+    @POST
+    @Path("/updateMap")
     @Transactional
-    public Response updateMaps(@PathParam("id")Long id, Map<Long, URL> groupMaps){
-        if (id == null || groupMaps == null) {
+    public void updateMaps(Map<Long, URL> groupMap){
+
+        if ( groupMap == null) {
             throw new IllegalArgumentException();
-        }            
-        //Group group = this.groupRepo.findById(id);
-        //group.urlMap = groupMaps;
-        this.map.urls = groupMaps;
-        
-        return Response.status(Status.OK).build();
+        }
+        //groupMap.forEach((k,v)-> this.groups.urls.put(k, v));        
+        groups.urls = groupMap;
+        //return Response.status(Status.OK).build();
     }
     /**
      * @param group
@@ -143,7 +160,7 @@ public class GroupRoutes {
     @Path("{id}/URL")
     public Response updateURL(@PathParam("id")Long id, String url){
         Group group = this.groupRepo.findById(id);
-        URL url2= group.url; 
+        URL url2 = group.url; 
         try {
             url2 = new URL(url);
         } catch (MalformedURLException e) {
@@ -154,28 +171,40 @@ public class GroupRoutes {
         return Response.status(Status.OK).build();
     }
 
+    @GET
+    @Path("map")
+    public Map<Long, URL> getMap(){
+        return this.groups.urls;
+        //groups.urls; 
+    }
+
+    /**
+     * @param group
+     * @param uriInfo
+     * @return
+     */
     @POST
     @Transactional
      public Response create(Group group, @Context UriInfo uriInfo) {
         groupRepo.persist(group);
         
+        //groups.group = group;
+        this.groups.urls.put(group.id, group.url);
         //Add web client logic and incorperate the hubUrl from application.properties
         //Made change
         //String hubURL = ConfigProvider.getConfig().getValue("hubURL", String.class);
         //Add web client logic and incorperate the hubUrl from application.properties
         Object[] arr = {group.url, group.id};
 
-        //group.urlMap.urlMap.put((long)group.id, group.url);
-        this.map.urls.put((long)group.id, group.url);
         WebClient client = WebClient.create(hubURL); 
-        group.id = client
-                       .post()
+         client
+                        .post()
                         .uri("/post")
                         .body(Mono.just(arr), Object[].class)
+                        //.contentType(MediaType.APPLICATION_JSON)
                         .retrieve()
-                        .bodyToMono(Long.class)
+                        .bodyToMono(Void.class)
                         .block();
-                        //.contentType(())
                         //.bodyValue()//{url"\"" + group.url + "}
                         //.header("Authorization", "Bearer MY_SECRET_TOKEN")
         
@@ -198,18 +227,22 @@ public class GroupRoutes {
      * @return
      */
     @DELETE
-    @Path("{id}")
+    @Path("/{id}")
     @Transactional
     public Response deleteById(@PathParam("id") Long id) {
         if (id == null) {
             throw new IllegalArgumentException();
-       }        
+        }  
+        //this.groups.urls.remove(id);
+        
         boolean deleted = groupRepo.deleteById(id);
         
+        //groups.group = null;
+
         if (!deleted) {
             return Response.status(BAD_REQUEST).build();
         }
- 
+        
         WebClient client = WebClient.create(hubURL);
         client//.method(HttpMethod.DELETE)
         .delete()
