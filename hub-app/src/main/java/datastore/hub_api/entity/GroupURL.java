@@ -5,7 +5,6 @@ import java.net.URL;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-//import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
