@@ -58,21 +58,11 @@ public class HubRoutes {
     @POST
     //@Transactional
     public Long create(GroupURL groupURL, @Context UriInfo uriInfo) throws JsonProcessingException {
-        //this.hubRepo.persist(groupURL);
-        
-       // if(groupURL == null){
-            //throw new IllegalArgumentException();
-        //}
-        Long id = doCreate(groupURL);
-        //Recording the groups id and url in db
-        //GroupURL groupURL = new GroupURL();
-        //groupURL.url = url; 
-        
+        if(groupURL == null){
+            throw new IllegalArgumentException();
+        }
+        doCreate(groupURL);
         this.serveURLs();
-
-        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-        uriBuilder.path(Long.toString(groupURL.id));
-
         return groupURL.id;
     }
 
