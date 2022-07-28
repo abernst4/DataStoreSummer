@@ -1,40 +1,32 @@
 package datastore.hub_api.route;
 import datastore.hub_api.entity.GroupURL;
 import datastore.hub_api.repository.HubRepository;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import io.quarkus.logging.Log;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import javax.transaction.Transactional;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.inject.Inject;
 import reactor.core.publisher.Mono;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
+import org.springframework.http.MediaType;
 
 
 @Path("/hub")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON_VALUE)
+@Consumes(MediaType.APPLICATION_JSON_VALUE)
 public class HubRoutes {
+    
     @Inject 
     HubRepository hubRepo; 
 
@@ -64,27 +56,36 @@ public class HubRoutes {
      * index[1] is the group id
      */
     @POST
-    @Path("/post")
+    //@Transactional
+    public Long create(GroupURL groupURL, @Context UriInfo uriInfo) throws JsonProcessingException {
+        //this.hubRepo.persist(groupURL);
+        
+       // if(groupURL == null){
+            //throw new IllegalArgumentException();
+        //}
+        Long id = doCreate(groupURL);
+        //Recording the groups id and url in db
+        //GroupURL groupURL = new GroupURL();
+        //groupURL.url = url; 
+        
+        this.serveURLs();
+
+        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+        uriBuilder.path(Long.toString(groupURL.id));
+
+        return groupURL.id;
+    }
+
+    
     @Transactional
-    public Long create(Object[] groupFields,  @Context UriInfo uriInfo) throws JsonProcessingException {
-        if(groupFields == null){
+    public Long doCreate(GroupURL groupURL) throws JsonProcessingException {
+        this.hubRepo.persist(groupURL);
+        if(groupURL == null){
             throw new IllegalArgumentException();
         }
-        GroupURL group_url = new GroupURL();
-            URL url=null;
-            try {
-                url = new URL(groupFields[0].toString());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            group_url.url = url;
-            group_url.id=(long)((int)groupFields[1]);
-
-        //Recording the groups id and url in db
-        this.hubRepo.persist(group_url);
-        this.serveURLs();
-        return group_url.id;
+        return groupURL.id;
     }
+
 
     /**
      * WebClient is an interface representing the main entry point for performing web requests.
@@ -96,19 +97,21 @@ public class HubRoutes {
      * bodyHoldMono - The WebClient class uses reactive features, in the form of a Mono to hold the content of the message
      */
     private void serveURLs() {
-        Map<Long, URL> groupURLs = this.hubRepo.getGroupUrls();
-        for (Long id : groupURLs.keySet()) {
-            URL url = this.hubRepo.getGroupUrls().get(id);
-            if(url != null){
-            WebClient client = WebClient.create(url.toString());
-            client
-                .post()
-                .uri("/updateMap")                
-                .body(Mono.just(groupURLs), Map.class)
-                .retrieve()
-                .bodyToMono(Void.class)
-                .block();
-            }
+        for (GroupURL groupURL : this.hubRepo.listAll()) {
+            URL url = groupURL.url;
+            try {
+
+                WebClient client = WebClient.create(url.toString());
+                client
+                    .post()
+                    .uri("/groups/updateMap")                
+                    .body(Mono.just(hubRepo.getGroupUrls()), Map.class)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            } catch (WebClientResponseException e) {
+                Log.info(e);
+            } 
         }
     }
 

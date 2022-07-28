@@ -15,10 +15,10 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 @ApplicationScoped
 public class HubRepository implements PanacheRepository<GroupURL> {
     public Map<Long, URL> getGroupUrls() {
-        Map<Long, URL> IdMap = new HashMap<>();
+        Map<Long, URL> groupMap = new HashMap<>();
         for (GroupURL group_url : listAll()) {
-            IdMap.put(group_url.id, group_url.url);
+            groupMap.put(group_url.id, group_url.url);
         }
-        return IdMap;
+        return groupMap;
     }
 }
