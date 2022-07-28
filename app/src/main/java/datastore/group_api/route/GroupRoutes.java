@@ -4,46 +4,31 @@ import datastore.group_api.database.GroupRepository;
 import datastore.group_api.entity.Group;
 import datastore.group_api.map.GroupURL;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-
-import java.util.List;
-import java.util.Map;
+import java.net.*;
+import java.util.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response;
+import javax.transaction.Transactional;
+
 import javax.ws.rs.core.Response.Status;
+import static javax.ws.rs.core.Response.Status.*;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-
+import org.springframework.http.*;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Path("/groups/")
 @ApplicationScoped
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON_VALUE)
+@Consumes(MediaType.APPLICATION_JSON_VALUE)
 public class GroupRoutes {
     @Inject 
     GroupRepository groupRepo;
@@ -62,7 +47,7 @@ public class GroupRoutes {
 
     @GET
     @Path("redirect")
-    public Response getOnServer() {
+    public Response getOnServer() {                    
         return Response.status(Status.OK).entity(groupRepo.findAll().firstResult()).build();
     }
 
@@ -109,7 +94,6 @@ public class GroupRoutes {
      */
     @PUT
     @Path("{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Long id, Group updated_group, @Context UriInfo uriInfo) throws URISyntaxException {
         if (id == null || updated_group == null) {
@@ -119,6 +103,7 @@ public class GroupRoutes {
         if (this.groups.group == null || id != this.groups.group.id) {
             return this.groups.redirect(id, uriInfo);
         }
+
         Group group = groupRepo.findById(id);
         if (group == null) {
             throw new NotFoundException();
@@ -140,26 +125,6 @@ public class GroupRoutes {
         groups.urls = groupMap;
     }
 
-    /**
-     * @param group
-     * @return
-     * @throws UnknownHostException
-     * @throws MalformedURLException
-     */
-    @PUT
-    @Path("{id}/URL")
-    public Response updateURL(@PathParam("id")Long id, String url){
-        Group group = this.groupRepo.findById(id);
-        URL url2 = group.url; 
-        try {
-            url2 = new URL(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } 
-        group.url = url2; 
-        return Response.status(Status.OK).build();
-    }
-
     @GET
     @Path("map")
     public Map<Long, URL> getMap(){
@@ -170,36 +135,50 @@ public class GroupRoutes {
      * @param group
      * @param uriInfo
      * @return
+     * @throws MalformedURLException
      */
     @POST
     @Transactional
-     public Response create(Group group, @Context UriInfo uriInfo) {
-        groupRepo.persist(group);
-        
-        this.groups.urls.put(group.id, group.url);
-        
-        Object[] arr = {group.url, group.id};
-        WebClient client = WebClient.create(hubURL); 
-        client
-            .post()
-            .uri("/post")
-            .body(Mono.just(arr), Object[].class)
-            .retrieve()
-            .bodyToMono(Void.class)
-            .block();        
-        if (groupRepo.isPersistent(group)) {
-            return Response
-                            .created(uriInfo
-                                .getAbsolutePathBuilder()
-                                .path(Long.toString(group.id))
-                                .build()
-                            )
-                            .entity(group)
-                            .status(Status.CREATED)
-                            .build();
+     public Response create(Group group, @Context UriInfo uriInfo) throws MalformedURLException, UnknownHostException { 
+        if (this.groups.group != null) {
+            return Response.status(409, "Server is already associated a group").build();
         }
-        return Response.status(NOT_FOUND).build();
+
+        this.groups.group = group;
+
+        group.url = new URL(URL);
+        
+        group.id = connectToHub(group.url);
+
+        groupRepo.persist(group);
+        if (groupRepo.isPersistent(group) == false) { 
+            throw new NotFoundException();
+        }
+
+        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+        uriBuilder.path(Long.toString(group.id));
+
+        return Response.created(uriBuilder.build())
+                        .entity(group)
+                        .status(Status.CREATED)
+                        .build();
     } 
+
+    /**
+     * @param group_url
+     * @return
+     */
+    private Long connectToHub(URL group_url) {
+        WebClient client = WebClient.create(hubURL); 
+        Long new_group_id = client
+                                .post()
+                                .uri("/hub")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue("{\"url\":\"" + group_url + "\"}")
+                                .retrieve()
+                                .bodyToMono(Long.class).block();     
+        return new_group_id;
+    }
 
     /**
      * @param id
@@ -214,16 +193,20 @@ public class GroupRoutes {
             throw new IllegalArgumentException();
         }  
         
+        if (this.groups.group == null || id != this.groups.group.id) {
+            return this.groups.redirect(id, uriInfo);
+        }
+
         boolean deleted = groupRepo.deleteById(id);
         
         if (!deleted) {
             return Response.status(BAD_REQUEST).build();
         }
-        
+        this.groups.group = null;
         WebClient client = WebClient.create(hubURL);
         client
             .delete()
-            .uri("/{id}",id)
+            .uri("/hub/{id}",id)
             .retrieve() 
             .bodyToMono(Void.class)
             .block();

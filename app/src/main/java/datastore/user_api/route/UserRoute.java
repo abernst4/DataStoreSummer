@@ -2,9 +2,11 @@ package datastore.user_api.route;
 import datastore.user_api.entity.User;
 import datastore.user_api.database.UserRepository;
 import datastore.group_api.entity.Group;
+import datastore.group_api.map.GroupURL;
 import datastore.group_api.database.GroupRepository;
-import java.util.List;
+
 import javax.inject.Inject;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,8 +23,13 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
+import java.net.URISyntaxException;
+
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+
 import javax.transaction.Transactional;
 
 @Path("/groups")
@@ -33,32 +40,17 @@ public class UserRoute {
     @Inject UserRepository userRepo;
     @Inject GroupRepository groupRepo;
 
+    @Inject
+    GroupURL groups; 
+
     @GET
     @Path("/users")
-    public List<User> getAll(
-                            @QueryParam("group-id") Long groupId,
-                            @QueryParam("name") String name,
-                            @QueryParam("email") String email
-                            )
-    {
-        if (name == null & email == null) {
-            return groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new).users;
-        } else if (email == null) {
-            return userRepo.findByName(groupId, name);
-        } else if (name == null) {
-            return userRepo.findByEmail(groupId, email);
-        } else {
-            return userRepo.findByNameAndEmail(groupId, name, email);
+    public Response getAll(@QueryParam("group-id") long groupId, @QueryParam("name") String name, @QueryParam("email") String email, @Context UriInfo uriInfo) throws URISyntaxException {
+        if (this.groups.group == null || groupId != this.groups.group.id) { 
+            return this.groups.redirect(groupId, uriInfo, name);
         }
+        return Response.status(Status.OK).entity(userRepo.findByName(groupId, name)).build(); 
     }
-    
-
-    @GET
-    @Path("/{id}")
-    public User getById(@PathParam("id") Long id) {
-        return userRepo.findById(id);
-    }
-
 
     @POST
     @Transactional
@@ -66,6 +58,7 @@ public class UserRoute {
     public Response create(@PathParam("group-id") long groupId, User user, @Context UriInfo uriInfo) {
         Group group = groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new);
         user.group = group;
+        this.groups.group = this.groupRepo.findById(groupId);
         userRepo.persist(user);
         if (!userRepo.isPersistent(user)) {
             throw new NotFoundException();
@@ -79,16 +72,22 @@ public class UserRoute {
                         .build();
     }
     
+    /**
+     * @param groupId
+     * @param id
+     * @param user
+     * @param uriInfo
+     * @return
+     * @throws URISyntaxException
+     */
     @PUT
     @Path("/{group-id}/users/{id}")
     @Transactional
-    public Response update(
-                                @PathParam("group-id") Long groupId,
-                                @PathParam("id") Long id,
-                                User user,
-                                @Context UriInfo uriInfo
-                            )
-    {
+    public Response update(@PathParam("group-id") Long groupId, @PathParam("id") Long id, User user, @Context UriInfo uriInfo) throws URISyntaxException {
+        if (this.groups.group == null ||groupId != this.groups.group.id) {
+            return this.groups.redirect(groupId, uriInfo);
+        }
+
         groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new);
         User user_entity = userRepo.findById(id);
         if (user_entity == null) {
@@ -103,10 +102,19 @@ public class UserRoute {
                         .build();
     }
 
+    /**
+     * @param groupId
+     * @param id
+     * @return
+     * @throws URISyntaxException
+     */
     @DELETE
     @Path("/{group-id}/users/{id}")
     @Transactional
-    public Response deleteById(@PathParam("group-id") Long groupId, @PathParam("id") Long id) {
+    public Response deleteById(@PathParam("group-id") Long groupId, @PathParam("id") Long id, @Context UriInfo uriInfo) throws URISyntaxException {
+        if (this.groups.group == null ||groupId != this.groups.group.id) {
+            return this.groups.redirect(groupId, uriInfo);
+        }        
         groupRepo.findByIdOptional(groupId).orElseThrow(NotFoundException::new);
         User entity = userRepo.findById(id);
         if (entity == null) {
