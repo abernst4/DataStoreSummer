@@ -18,3 +18,14 @@ Webclient is an API that connect our different servers. More specifically, it pr
 
 ## SmallRye Health - Health Checks
 SmallRye Health allows applications to provide information about their state to external viewers which is typically useful in cloud environments where automated processes must be able to determine whether the application should be discarded or restarted.
+
+To Do List
+    - Install extensions from quarkus to allow checkouts to exist and allow updates to happen periodically
+        - 
+    - Program updating all servers periodically
+        - 
+    - Program periodic check
+        - 
+    - Produce some result for a sub-par health check
+        - 
+    - Make a video
