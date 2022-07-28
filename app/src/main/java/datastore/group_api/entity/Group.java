@@ -1,19 +1,25 @@
 package datastore.group_api.entity;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import java.util.*;
 import datastore.user_api.entity.User;
 
-@Entity
-@Table(name = "groups")
-public class Group extends PanacheEntity{
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+
+import java.net.URL;
+
+import java.util.*;
+
+@javax.persistence.Entity
+@javax.persistence.Table(name = "groups")
+public class Group extends PanacheEntityBase {
+    @Id
+    public long id; 
     public String name;
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+
+    public URL url; 
+
+    @OneToMany(mappedBy = "group")
     public List<User> users;
 }
-
-
