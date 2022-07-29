@@ -6,8 +6,13 @@ Multiple servers:
     2) Higher Security
     3) Efficient memory allocation
 
+## What does it mean to have multiple servers? 
+Dividing up the data of the program, storing each division in it's own database, and hosting the each database on its own server.
+Then, when on division wants to speak to another, it simply calls it's server.
+
 ## How does the Hub work?
-The Hub is a server that acts a map and guide for all of the other servers. More specifically, the hub stores and sends a map of all the server urls to all servers. 
+The Hub is a server that acts a map and guide for all of the other servers. 
+More specifically, the hub stores and sends a map of all the server urls to all servers. 
 
 ## How to Run the Program
 To emulate running multiple servers by running multiple quarkus applictions in different terminals. We set each application's Port number to be different so that the quarkus applications will not conflict. 
