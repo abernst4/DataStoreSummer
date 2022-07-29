@@ -23,3 +23,6 @@ public class Group extends PanacheEntityBase {
     @OneToMany(mappedBy = "group")
     public List<User> users;
 }
+
+
+
