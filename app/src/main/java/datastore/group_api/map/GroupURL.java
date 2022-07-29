@@ -50,11 +50,4 @@ public class GroupURL {
         }
         return Response.status(NOT_FOUND).build();
     }
-
-    /** 
-     * Method for health checks 
-     * 
-     */
-
-
 }
