@@ -94,7 +94,6 @@ public class GroupRoutes {
      */
     @PUT
     @Path("{id}")
-    @Transactional
     public Response update(@PathParam("id") Long id, Group updated_group, @Context UriInfo uriInfo) throws URISyntaxException {
         if (id == null || updated_group == null) {
             throw new IllegalArgumentException();
@@ -109,10 +108,14 @@ public class GroupRoutes {
             throw new NotFoundException();
         }
         group.name = updated_group.name;
-        groupRepo.persist(group);
         return Response .status(Status.OK)
                         .entity(group)
                         .build();
+    }
+
+    @Transactional
+    public void update(Group group){
+        this.groupRepo.persist(group);
     }
     
     @POST
